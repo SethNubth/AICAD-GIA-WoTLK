@@ -5,7 +5,7 @@ Profesiones Herboristería - Mineria Help 3.3.5
 > **AICAD GIA - Gather Information Addon**
 > Addon Standalone para Naerzone - Rutas Minería / Herboristería 1-450 + Router AI + NodeSight HD
 
-![Version](https://img.shields.io/badge/Version-1.0%20HDLlama%20Naerzone-ffff00)
+![Version](https://img.shields.io/badge/Version-1.0%20Llama%20Naerzone-ffff00)
 ![Interface](https://img.shields.io/badge/Interface-30300%20WotLK-0078D4)
 ![Server](https://img.shields.io/badge/Server-Naerzone%20EsMX%2FptBR-red)
 
