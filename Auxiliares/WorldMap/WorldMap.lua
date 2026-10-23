@@ -1,4 +1,4 @@
--- Auxiliares\WorldMap\WorldMap.lua - FULL - Blizzard Map 30300 - 0 errores Lua - TomTom OFF - HD Skada
+-- Auxiliares\WorldMap\WorldMap.lua - FULL FIX Ver otras zonas - Blizzard Map 30300 - 0 errores Lua - TomTom OFF - HD Skada
 local ADDON_NAME, ns = ...
 ns = ns or {}
 
@@ -17,14 +17,11 @@ WorldMap.pinCount = 0
 -- Textura desde Core\Media.lua HD -> Names.lua -> fallback Blizzard
 local function GetIcon(name)
   if not name then return AICAD_MEDIA["Default"] or "Interface\\Minimap\\Tracking\\Herbs" end
-  -- 1. Tu Media HD Skada 1024
   if AICAD_MEDIA[name] then return AICAD_MEDIA[name] end
-  -- 2. Tu Names.lua 1-450 FULL
   if ns.NodeIcon then
     local custom = ns.NodeIcon(name)
     if custom then return custom end
   end
-  -- 3. Fallback inteligente WoTLK
   local n = string.lower(name)
   if n:find("titan") then return AICAD_MEDIA["Titanium"] or AICAD_MEDIA["Titanio"] or "Interface\\Icons\\inv_ore_titanium_01" end
   if n:find("saron") then return AICAD_MEDIA["Saronite"] or AICAD_MEDIA["Saronita"] or "Interface\\Icons\\inv_ore_saronite_01" end
@@ -66,7 +63,7 @@ function WorldMap:ShowZone(mapID)
       local ok, id = pcall(GetCurrentMapAreaID)
       if ok then mapID = id end
     end
-    mapID = mapID or 485 -- Corona de Hielo fallback WoTLK
+    mapID = mapID or 485
   end
   
   local activeDB = "personal"
@@ -97,9 +94,7 @@ function WorldMap:ShowZone(mapID)
     local y = node.y or node[2] or 0.5
     if x > 1 then x = x / 100 end
     if y > 1 then y = y / 100 end
-    if x < 0 or x > 1 or y < 0 or y > 1 then
-      -- evita pins fuera mapa
-    else
+    if x >= 0 and x <= 1 and y >= 0 and y <= 1 then
       local pin = self:GetPin()
       pin.tex:SetTexture(GetIcon(node.name or node[3]))
       pin:ClearAllPoints()
@@ -119,11 +114,15 @@ function WorldMap:ShowZone(mapID)
   end
 end
 
--- Eventos Blizzard Map 30300
+-- Eventos Blizzard Map 30300 FIX ver otras zonas
 local ev = CreateFrame("Frame")
 ev:RegisterEvent("WORLD_MAP_UPDATE")
 ev:SetScript("OnEvent", function(self, event)
-  WorldMap:ShowZone()
+  if C_Timer and C_Timer.After then
+    C_Timer.After(0.1, function() WorldMap:ShowZone() end)
+  else
+    WorldMap:ShowZone()
+  end
 end)
 
 -- Slash /wmap
@@ -133,8 +132,8 @@ SlashCmdList["AICADWMAP"] = function(msg)
   msg = msg or ""
   local id = tonumber(string.match(msg, "%d+"))
   WorldMap:ShowZone(id)
-  print("|cffffcc00[AICAD WorldMap] Pintando DB: "..(AICAD_ROUTER_DB.activeDB or "personal").." en mapa Blizzard (M) - WoTLK 30300|r")
+  print("|cffffcc00[AICAD WorldMap] Pintando DB: "..(AICAD_ROUTER_DB.activeDB or "personal").." Mapa: "..(id or "Actual").." - WoTLK 30300|r")
 end
 
 _G["AICAD_WorldMap"] = WorldMap
-print("|cff00ff00[AICAD WorldMap] Blizzard Map HD 30300 cargado - TomTom OFF|r")
+print("|cff00ff00[AICAD WorldMap] Blizzard Map HD 30300 cargado - Fix otras zonas OK - TomTom OFF|r")
