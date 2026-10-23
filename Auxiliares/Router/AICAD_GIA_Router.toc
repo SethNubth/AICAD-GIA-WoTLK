@@ -1,0 +1,9 @@
+## Interface: 30300
+## Title: AICAD GIA - Router AI
+## Notes: Router AI - Personal / GatherMate - Gold / Level 1-450 - TomTom opcional - Usa mapa Blizzard
+## Author: GOD
+## Version: 1.0 Final
+## Dependencies: AICAD_GIA
+
+Router.lua
+Settings.lua
