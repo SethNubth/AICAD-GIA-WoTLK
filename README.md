@@ -118,12 +118,8 @@ Formato: `x, y 0-100` compatible TomTom r240 Naerzone
 
 Credits
 
-- **Author:** AICAD - GOD - Naerzone v1.0 Forever
+- **Author:** SethNubth- GOD - Naerzone v1.0 - WoTLK 3.3.5 Interface: 30300 
 - **Maps:** Blizzard WorldMapDetailFrame + Altertime WEB .TGA 1024x1024
 - **Lists:** Curse NodeSight NodeLists
 - **Libs:** LibStub, LibSharedMedia-3.0, Skada Media
-- **Auxiliares:** TomTom r240 Cladhaire, GatherMate2
-
----
-**AICAD-GIA-WoTLK v1.0 Forever - Naerzone 3.3.5a**
-¿Lo subes así GOD o le agregamos badge de GitHub Release para `AICAD-GIA-WoTLK-v1.0-Forever-Naerzone-30300.zip`?
+- **Auxiliares:** TomTom r240 Cladhaire, GatherMate
