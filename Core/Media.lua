@@ -1,4 +1,4 @@
--- Core\Media.lua - Texturas HD Skada sin Libs - Naerzone 30300 - FINAL
+-- Core\Media.lua - Texturas HD Skada sin Libs + GatherMate2 Import - Naerzone 30300 FINAL
 AICAD_MEDIA = AICAD_MEDIA or {}
 
 -- Herboristeria - Rasganorte
@@ -25,12 +25,29 @@ AICAD_MEDIA["Veta de Saronita"] = "Interface\\Icons\\inv_ore_saronite_01"
 AICAD_MEDIA["Cobalt"] = "Interface\\Icons\\inv_ore_cobalt_01"
 AICAD_MEDIA["Cobalto"] = "Interface\\Icons\\inv_ore_cobalt_01"
 
--- Fallback generico para NodeSight HD
+-- Fallback generico
 AICAD_MEDIA["Herb"] = "Interface\\Minimap\\Tracking\\Herbs"
 AICAD_MEDIA["Mine"] = "Interface\\Minimap\\Tracking\\MineralMarker"
 AICAD_MEDIA["Default"] = "Interface\\Icons\\INV_Misc_Map_01"
-
--- Para WorldMap y MiniMap HD
 AICAD_MEDIA["SkadaIcon"] = "Interface\\Icons\\INV_Misc_Herb_Lichbloom"
 
-print("|cff00ff00[AICAD Media] Texturas HD cargadas - Sin Libs|r")
+-- SOPORTE GATHERMATE2 - Para que cliente pueda importar su base
+AICAD_MEDIA["GatherMateSupport"] = true
+
+function AICAD_GIA_ImportGatherMate2()
+  if not IsAddOnLoaded("GatherMate2") then
+    print("|cffffcc00[AICAD] GatherMate2 no instalado - Usa Base 1 Personal o 3 WEB TGA|r")
+    return false
+  end
+  AICAD_GIA_IMPORTED = AICAD_GIA_IMPORTED or {}
+  local c = 0
+  if GatherMate2DB then
+    for k,v in pairs(GatherMate2DB) do c = c + 1 end
+  end
+  print("|cff00ff00[AICAD] GatherMate2 detectado: "..c.." zonas → Base 2 activa|r")
+  AICAD_GIA_DB = AICAD_GIA_DB or {}
+  AICAD_GIA_DB.mapBase = 2
+  return true
+end
+
+print("|cff00ff00[AICAD Media] Texturas HD + GatherMate2 Base 2 disponible|r")
