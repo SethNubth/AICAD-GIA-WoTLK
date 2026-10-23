@@ -67,7 +67,7 @@ AICAD-GIA-WoTLK\
 
 1. Descarga http://AICAD-GIA-WoTLK-v1.0-Forever-Naerzone-30300.zip
 2. Extrae a Interface\AddOns\AICAD_GIA\
-3. WoW Naerzone → AddOns → Activa AICAD GIA v1.0 Forever
+3. WoW Naerzone → AddOns → Activa AICAD GIA v1.0 
 4. Entra al juego
 
 🎮 Comandos y Configuración
