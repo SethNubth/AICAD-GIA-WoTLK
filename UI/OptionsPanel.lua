@@ -1,4 +1,4 @@
--- UI\OptionsPanel.lua - Interface Menu Naerzone 30300 - AICAD-GIA-WoTLK v1.0 Forever
+-- UI\OptionsPanel.lua - Interface Menu Naerzone 30300 - AICAD-GIA-WoTLK v1.0 
 
 AICAD_GIA = AICAD_GIA or {}
 AICAD_GIA.OptionsPanel = {}
