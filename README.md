@@ -1,6 +1,6 @@
 # AICAD-GIA-WoTLK
 Profesiones Herboristería - Mineria Help 3.3.5
-# AICAD-GIA-WoTLK - v1.0 Forever - Naerzone 3.3.5a (30300)
+# AICAD-GIA-WoTLK - v1.0  Naerzone 3.3.5a (30300)
 
 > **AICAD GIA - Gather Information Addon**
 > Addon Standalone para Naerzone - Rutas Minería / Herboristería 1-450 + Router AI + NodeSight HD
