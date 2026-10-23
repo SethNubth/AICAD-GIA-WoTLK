@@ -5,8 +5,8 @@
 ## Notes: Naerzone 3.3.5a - Rutas Mineria/Herboristeria 1-450 + Router AI Oro/Leveling + NodeSight + WorldMap 3 Bases Original Personal/GatherMate/WEB Altertime .TGA 1024 + Skada Media HD - Standalone
 ## Notes-esMX: Naerzone 3.3.5a - Rutas 1-450 + Router AI Oro/Subir Profesion + NodeSight + Mapa 3 Bases Original/GatherMate/WEB + Media HD - Independiente, TomTom r240 opcional
 ## Notes-ptBR: Naerzone 3.3.5a - Rotas 1-450 + Router AI Ouro/Up + NodeSight + Mapa 3 Bases + Media HD - Independente
-## Author: AICAD - GOD - Naerzone
-## Version: 1.0 Forever Naerzone
+## Author: SethNubth- GOD - Naerzone
+## Version: 1.0 Naerzone
 ## X-Interface: 30300
 ## X-Naerzone: true
 ## X-Language: esMX, ptBR, enUS
