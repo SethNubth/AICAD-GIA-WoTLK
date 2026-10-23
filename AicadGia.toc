@@ -1,46 +1,22 @@
 ## Interface: 30300
 ## Title: AICAD GIA |cffffcc00v1.0 - Naerzone 3.3.5a|
-## Title-esMX: AICAD GIA |cffffcc00v1.0 - Naerzone|
-## Title-ptBR: AICAD GIA |cffffcc00v1.0 - Naerzone|
-## Notes: Naerzone 3.3.5a - Rutas Mineria/Herboristeria 1-450 + Router AI Oro/Leveling + NodeSight + WorldMap 3 Bases Original Personal/GatherMate/WEB Altertime .TGA 1024 + Skada Media HD - Standalone
-## Notes-esMX: Naerzone 3.3.5a - Rutas 1-450 + Router AI Oro/Subir Profesion + NodeSight + Mapa 3 Bases Original/GatherMate/WEB + Media HD - Independiente, TomTom r240 opcional
-## Notes-ptBR: Naerzone 3.3.5a - Rotas 1-450 + Router AI Ouro/Up + NodeSight + Mapa 3 Bases + Media HD - Independente
+## Notes: Naerzone 3.3.5a - Rutas 1-450 + Router AI Oro/Level + NodeSight HD + WorldMap - TomTom OFF por defecto
 ## Author: SethNubth - Naerzone
-## Version: 1.0 - Naerzone
-## X-Interface: 30300
-## X-Naerzone: true
-## X-Language: esMX, ptBR, enUS
-## X-Category: Map, Naerzone, Gathering
-## X-Website: https://github.com/SethNubth/AICAD-GIA-WoTLK
-## X-Server: Naerzone - WoW 3.3.5a - 12340
-## X-Credits: Naerzone Community - Wrath of the Lich King - Blizzard Entertainment
-## X-License: MIT - Fan Addon - All WoW assets belong to Blizzard Entertainment
-## OptionalDeps: TomTom, GatherMate2, GatherMate2_Data, SharedMedia, Skada
-## SavedVariables: AICAD_GIA_DB
+## Version: 1.0 - Final Blizzard Map TomTom OFF
+## OptionalDeps: TomTom, GatherMate2, GatherMate2_Data
+## SavedVariables: AICAD_GIA_DB, AICAD_WORLDMAP_DB, AICAD_ROUTER_DB, NodeSightDB
 ## SavedVariablesPerCharacter: AICAD_GIA_CHAR_DB
 
-# Libs Naerzone opcionales - Si no están, carga igual Standalone
-Libs\LibStub\LibStub.lua
-Libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua
-
-# Core Naerzone
+# Core - Texturas HD plantas/minería aquí
 Core\Media.lua
 Core\Locale.lua
 Core\Config.lua
 Core\Main.lua
 
-# Data Naerzone - NodeLists toggle + Zones 30300 + Routes AI Oro/1-450 TomTom r240
-Data\NodeLists.lua
-Data\Zones.lua
-Data\Routes.lua
+# Auxiliares
+Auxiliares\NodeSight\NodeSight.lua
+Auxiliares\WorldMap\WorldMap.lua
+Auxiliares\Router\Router.lua
 
-# Modules Naerzone - RouterAI línea amarilla + NodeSight toggle + Mineria/Herbo 1-450
-Modules\NodeSight.lua
-Modules\RouterAI.lua
-Modules\Mineria.lua
-Modules\Herboristeria.lua
-
-# UI Naerzone - WorldMap 3 Bases Original Personal/GatherMate/WEB Altertime 1024 + MiniMap HD + OptionsPanel
-UI\WorldMap.lua
-UI\MiniMap.lua
+# UI - Botón Activar TomTom
 UI\OptionsPanel.lua
