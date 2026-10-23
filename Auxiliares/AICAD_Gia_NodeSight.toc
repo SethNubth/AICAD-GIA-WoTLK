@@ -1,0 +1,16 @@
+## Interface: 30300
+## Title: AICAD GIA - NodeSight Auxiliar |cffffcc00Skada HD - Naerzone 1-450|
+## Notes: Basado en NodeSight 1.4.1 Krelock - Migrado retail 10.x -> 30300 WotLK - Forma Skada 1024 - 1-450 FULL
+## Author: Krelock - Migrado SethNubth Naerzone
+## Version: 1.4.1-Naerzone-Skada-1-450
+## SavedVariables: NodeSightDB, AICAD_GIA_NODESIGHT_DB
+## IconTexture: Interface\Icons\INV_Misc_Herb_01
+## Category: Professions
+## Dependencies: AICAD_GIA
+
+Names.lua
+NodeSight.lua
+Sparkles.lua
+FarSparkles.lua
+WhatsNew.lua
+Settings.lua
