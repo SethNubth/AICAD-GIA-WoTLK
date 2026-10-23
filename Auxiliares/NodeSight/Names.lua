@@ -1,18 +1,65 @@
--- Auxiliares\NodeSight\Names.lua - 1-450 FULL Classic + TBC + WotLK - Naerzone
+-- Auxiliares\NodeSight\Names.lua - 1-450 FULL Classic + TBC + WotLK - Naerzone 30300 - FINAL
 ns = ns or {}
-ns.NodeKind = function(name)
-  if not name then return "treasure" end
-  name = name:lower()
-  if name:find("peacebloom") or name:find("silverleaf") or name:find("earthroot") or name:find("mageroyal") or name:find("briarthorn") or name:find("stranglekelp") or name:find("bruiseweed") or name:find("wild steelbloom") or name:find("grave moss") or name:find("kingsblood") or name:find("liferoot") or name:find("fadeleaf") or name:find("goldthorn") or name:find("khadgar") or name:find("wintersbite") or name:find("firebloom") or name:find("purple lotus") or name:find("sungrass") or name:find("blindweed") or name:find("ghost mushroom") or name:find("gromsblood") or name:find("golden sansam") or name:find("dreamfoil") or name:find("mountain silversage") or name:find("plaguebloom") or name:find("icecap") or name:find("black lotus") or name:find("felweed") or name:find("dreaming glory") or name:find("terocone") or name:find("ragveil") or name:find("netherbloom") or name:find("nightmare vine") or name:find("mana thistle") or name:find("goldclover") or name:find("tiger lily") or name:find("adder") or name:find("talandra") or name:find("lichbloom") or name:find("icethorn") or name:find("frost lotus") or name:find("pacificadora") or name:find("hojaplata") then
-    return "herbs"
-  end
-  if name:find("copper") or name:find("tin") or name:find("silver") or name:find("iron") or name:find("gold vein") or name:find("mithril") or name:find("truesilver") or name:find("small thorium") or name:find("rich thorium") or name:find("fel iron") or name:find("adamantite") or name:find("khorium") or name:find("cobalt") or name:find("saronite") or name:find("titanium") or name:find("vein") or name:find("deposit") or name:find("cobre") or name:find("esta") or name:find("plata") or name:find("hierro") or name:find("mitril") or name:find("veraplata") or name:find("torio") or name:find("cobalto") or name:find("saronita") then
-    return "ore"
-  end
-  return "treasure"
+AICAD_MEDIA = AICAD_MEDIA or {}
+
+-- Normaliza
+ns.Plain = function(name)
+  if not name then return "" end
+  return string.lower(name)
 end
-ns.NodeIcon = function(name) return nil end
-ns.Plain = function(name) return name and name:lower() or "" end
+
+-- Clasificador 1-450
+ns.NodeKind = function(name)
+  if not name then return "herb" end
+  local low = string.lower(name)
+  
+  -- Hierbas 1-450
+  if low:find("peacebloom") or low:find("silverleaf") or low:find("earthroot") or low:find("mageroyal") or low:find("briarthorn") 
+  or low:find("stranglekelp") or low:find("bruiseweed") or low:find("steelbloom") or low:find("grave moss") or low:find("kingsblood") 
+  or low:find("liferoot") or low:find("fadeleaf") or low:find("goldthorn") or low:find("khadgar") or low:find("wintersbite") 
+  or low:find("firebloom") or low:find("purple lotus") or low:find("sungrass") or low:find("blindweed") or low:find("ghost mushroom") 
+  or low:find("gromsblood") or low:find("golden sansam") or low:find("dreamfoil") or low:find("mountain silversage") or low:find("plaguebloom") 
+  or low:find("icecap") or low:find("black lotus") or low:find("felweed") or low:find("dreaming glory") or low:find("terocone") 
+  or low:find("ragveil") or low:find("netherbloom") or low:find("nightmare vine") or low:find("mana thistle") or low:find("goldclover") 
+  or low:find("tiger lily") or low:find("adder") or low:find("talandra") or low:find("lichbloom") or low:find("icethorn") 
+  or low:find("frost lotus") or low:find("flor") or low:find("pacificadora") or low:find("hojaplata") or low:find("vidarra") then
+    return "herb"
+  end
+  
+  -- Menas 1-450
+  if low:find("copper") or low:find("tin") or low:find("silver") or low:find("iron") or low:find("gold") 
+  or low:find("mithril") or low:find("truesilver") or low:find("thorium") or low:find("fel iron") or low:find("adamantite") 
+  or low:find("khorium") or low:find("cobalt") or low:find("saronite") or low:find("titanium") or low:find("vein") 
+  or low:find("deposit") or low:find("cobre") or low:find("esta") or low:find("plata") or low:find("hierro") 
+  or low:find("mitril") or low:find("veraplata") or low:find("torio") or low:find("cobalto") or low:find("saronita") or low:find("titanio") then
+    return "mine"
+  end
+  
+  return "herb"
+end
+
+-- Icono HD usando tu Media Skada
+ns.NodeIcon = function(name)
+  if not name then return AICAD_MEDIA["Default"] end
+  local low = string.lower(name)
+  
+  if low:find("titan") then return AICAD_MEDIA["Titanium"] or AICAD_MEDIA["Titanio"] end
+  if low:find("saron") then return AICAD_MEDIA["Saronite"] or AICAD_MEDIA["Saronita"] end
+  if low:find("cobalto") or low:find("cobalt") then return AICAD_MEDIA["Cobalt"] or AICAD_MEDIA["Cobalto"] end
+  if low:find("frost") or low:find("escarcha") or low:find("exanime") then return AICAD_MEDIA["FrostLotus"] or AICAD_MEDIA["Flor"] end
+  if low:find("lichbloom") or low:find("flor exanime") then return AICAD_MEDIA["Lichbloom"] or AICAD_MEDIA["Flor"] end
+  if low:find("icethorn") or low:find("espina") then return AICAD_MEDIA["Icethorn"] end
+  if low:find("talandra") then return AICAD_MEDIA["Talandra"] end
+  if low:find("goldclover") then return AICAD_MEDIA["Goldclover"] end
+  if low:find("adder") then return AICAD_MEDIA["Adder"] end
+  
+  local kind = ns.NodeKind(name)
+  if kind == "mine" then return AICAD_MEDIA["Mine"] end
+  return AICAD_MEDIA["Herb"] or AICAD_MEDIA["Flor"] or "Interface\\Minimap\\Tracking\\Herbs"
+end
+
 ns.TREASURE = { icon = "Interface\\Icons\\INV_Misc_Treasure_01" }
 ns.RARES, ns.FRIENDLY, ns.TOO_HARD = {}, {}, {}
 ns.skills, ns.professions, ns.TooHard, ns.NodeSkill = {}, {}, function() return false end, function() return 0 end
+
+print("|cff00ff00[AICAD Names] 1-450 FULL conectado a Media HD|r")
