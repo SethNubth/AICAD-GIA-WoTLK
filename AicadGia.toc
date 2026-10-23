@@ -1,22 +1,22 @@
 ## Interface: 30300
-## Title: AICAD GIA |cffffcc00v1.0 - Naerzone 3.3.5a|
-## Notes: Naerzone 3.3.5a - Rutas 1-450 + Router AI Oro/Level + NodeSight HD + WorldMap - TomTom OFF por defecto
-## Author: SethNubth - Naerzone
-## Version: 1.0 - Final Blizzard Map TomTom OFF
-## OptionalDeps: TomTom, GatherMate2, GatherMate2_Data
-## SavedVariables: AICAD_GIA_DB, AICAD_WORLDMAP_DB, AICAD_ROUTER_DB, NodeSightDB
+## Title: AICAD GIA |cffffcc00v1.0 Final|
+## Notes: Router AI Gold/Level + NodeSight 1-450 HD - Naerzone 3.3.5a
+## Author: GOD
+## Version: 1.0 Final 0 errores
+## OptionalDeps: TomTom
+## SavedVariables: AICAD_WORLDMAP_DB, AICAD_ROUTER_DB, NodeSightDB
 ## SavedVariablesPerCharacter: AICAD_GIA_CHAR_DB
 
-# Core - Texturas HD plantas/minería aquí
 Core\Media.lua
 Core\Locale.lua
 Core\Config.lua
 Core\Main.lua
 
-# Auxiliares
+Auxiliares\NodeSight\Names.lua
 Auxiliares\NodeSight\NodeSight.lua
+Auxiliares\NodeSight\Settings.lua
 Auxiliares\WorldMap\WorldMap.lua
 Auxiliares\Router\Router.lua
+Auxiliares\Router\Settings.lua
 
-# UI - Botón Activar TomTom
 UI\OptionsPanel.lua
