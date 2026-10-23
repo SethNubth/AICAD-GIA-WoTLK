@@ -1,12 +1,12 @@
--- Core\Locale.lua - Naerzone 30300 - esMX/ptBR/enUS - Safe
-
+-- Core\Locale.lua - Naerzone 30300 - esMX/ptBR/enUS - Safe - FINAL
 AICAD_GIA = AICAD_GIA or {}
-AICAD_GIA.L = {}
+AICAD_GIA.L = AICAD_GIA.L or {}
+AICAD_L = AICAD_L or AICAD_GIA.L -- compat para WorldMap y Router viejos
 
 local L = AICAD_GIA.L
-local locale = GetLocale()
+local locale = GetLocale() or "enUS"
 
-if locale == "esMX" or locale == "esES" then
+if locale == "esMX" or locale == "esES" or locale:find("es") then
   L["MINING"] = "Mineria"
   L["HERBALISM"] = "Herboristeria"
   L["GOLD_MODE"] = "ORO - Saronita/Titanio"
@@ -14,7 +14,7 @@ if locale == "esMX" or locale == "esES" then
   L["ORIGINAL_BASE"] = "Original Personal"
   L["GATHERMATE_BASE"] = "GatherMate2"
   L["WEB_BASE"] = "WEB Altertime"
-elseif locale == "ptBR" then
+elseif locale == "ptBR" or locale:find("pt") then
   L["MINING"] = "Mineracao"
   L["HERBALISM"] = "Herborismo"
   L["GOLD_MODE"] = "OURO - Saronita/Titanio"
@@ -30,4 +30,9 @@ else
   L["ORIGINAL_BASE"] = "Original Personal"
   L["GATHERMATE_BASE"] = "GatherMate2"
   L["WEB_BASE"] = "WEB Altertime"
+end
+
+-- Debug opcional
+if AICAD_GIA_DB and AICAD_GIA_DB.debug then
+  print("|cffffcc00[AICAD Locale] "..locale.." cargado|r")
 end
