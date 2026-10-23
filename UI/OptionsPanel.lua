@@ -1,4 +1,4 @@
--- UI\OptionsPanel.lua - Interface Menu Naerzone 30300 - AICAD-GIA-WoTLK v1.0 
+-- UI\OptionsPanel.lua - Interface Menu Naerzone 30300 - AICAD-GIA-WoTLK v1.0 - Safe Blizzard DMCA
 
 AICAD_GIA = AICAD_GIA or {}
 AICAD_GIA.OptionsPanel = {}
@@ -19,18 +19,18 @@ end
 function AICAD_GIA.OptionsPanel:CreatePanel()
   -- Panel principal ESC → Interface → AddOns → AICAD GIA
   local panel = CreateFrame("Frame", "AICAD_GIA_OptionsPanel", UIParent)
-  panel.name = "AICAD GIA |cffffcc00v1.0 Forever - Naerzone|"
+  panel.name = "AICAD GIA |cffffcc00v1.0 - Naerzone|"
   panel.okay = function() end
   panel.cancel = function() end
   
   -- Título
   local title = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
   title:SetPoint("TOPLEFT", 16, -16)
-  title:SetText("AICAD GIA |cffffcc00v1.0 Forever - Naerzone 3.3.5a| |cff888888AICAD-GIA-WoTLK|")
+  title:SetText("AICAD GIA |cffffcc00v1.0 - Naerzone 3.3.5a| |cff888888AICAD-GIA-WoTLK|")
   
   local subtitle = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
   subtitle:SetPoint("TOPLEFT", 16, -36)
-  subtitle:SetText("Rutas Mineria/Herboristeria 1-450 + Router AI + WorldMap 3 Bases + Skada Media HD")
+  subtitle:SetText("Rutas Mineria/Herboristeria 1-450 + Router AI + WorldMap 3 Bases + Media HD")
   
   -- ===== SECCION 1: WorldMap 3 Bases =====
   local section1 = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -149,12 +149,12 @@ function AICAD_GIA.OptionsPanel:CreatePanel()
   
   CreateCheckbox(panel, "UseGatherMate", "GatherMate2 + Data - Importar nodos", 16, -350, "useGatherMate", false)
   
-  CreateCheckbox(panel, "UseSkadaMedia", "Skada Media HD - Texturas HD 1024x1024 .TGA", 16, -375, "useSkadaMedia", true)
+  CreateCheckbox(panel, "UseSkadaMedia", "Media HD - Texturas HD 1024x1024 .TGA", 16, -375, "useSkadaMedia", true)
   
-  -- Info final
+  -- Info final safe
   local info = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
   info:SetPoint("TOPLEFT", 16, -410)
-  info:SetText("Map Blizzard: WorldMapDetailFrame + Minimap | Libs: LibStub + LibSharedMedia-3.0 | Media: Media\\Maps\\*.tga WEB Altertime | GitHub: AICAD-GIA-WoTLK")
+  info:SetText("Map Blizzard: WorldMapDetailFrame + Minimap | Libs: LibStub + LibSharedMedia-3.0 | Fan Addon - All WoW assets belong to Blizzard Entertainment | GitHub: AICAD-GIA-WoTLK")
   
   -- Registrar en Interface Options Blizzard 30300
   InterfaceOptions_AddCategory(panel)
