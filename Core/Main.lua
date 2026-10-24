@@ -1,70 +1,54 @@
--- Core\Main.lua - Init Naerzone 30300 - Safe - FINAL v1.2 - Scanner Prox + WEB solo mostrar
+-- Core\Main.lua - FINAL v1.3 - AUTO SOLO PASAR - Naerzone 30300
 AICAD_GIA = AICAD_GIA or {}
 
+function AICAD_GIA:InitDB()
+  AICAD_GIA_DB = AICAD_GIA_DB or {}
+  AICAD_GIA_DB.autoScan = true
+  AICAD_GIA_DB.personal = AICAD_GIA_DB.personal or {}
+  AICAD_GIA_DB.routeMode = AICAD_GIA_DB.routeMode or "GOLD"
+  _G["AICAD_WORLDMAP_DB"] = _G["AICAD_WORLDMAP_DB"] or {personal={}}
+  _G["AICAD_WORLDMAP_DB"].personal = _G["AICAD_WORLDMAP_DB"].personal or {}
+  NodeSightDB = NodeSightDB or {}
+  NodeSightDB.nodes = NodeSightDB.nodes or {}
+  print("|cff00ff00[AICAD] DB Iniciada - Auto Solo Pasar ON|r")
+end
+
 function AICAD_GIA:OnInitialize()
-  if not AICAD_GIA_DB then
-    AICAD_GIA:InitDB()
-  end
-  
-  if AICAD_GIA_DB then
-    if AICAD_GIA_DB.autoScan == nil then AICAD_GIA_DB.autoScan = true end
-    AICAD_GIA_DB.personal = AICAD_GIA_DB.personal or {}
-    if _G["AICAD_WORLDMAP_DB"] then
-      _G["AICAD_WORLDMAP_DB"].personal = _G["AICAD_WORLDMAP_DB"].personal or {}
-    end
-  end
+  if not AICAD_GIA_DB then self:InitDB() end
+  if AICAD_GIA_DB.autoScan == nil then AICAD_GIA_DB.autoScan = true end
   
   print("|cffffcc00[AICAD GIA v1.0 - Naerzone 3.3.5a] Cargado - /aicad para opciones|r")
-  print("|cffffcc00Base: "..(AICAD_GIA:GetMapBase() or 3).." | Modo: "..(AICAD_GIA:GetRouteMode() or "GOLD").." | TomTom OFF|r")
-  print("|cff00ff00[AICAD] Scanner ON - Solo pasar cerca guarda en Base 1 Personal | Base 3 WEB solo muestra|r")
+  print("|cffffcc00Base: "..(self:GetMapBase() or 3).." | Modo: "..(self:GetRouteMode() or "GOLD").." | /aicad 1 para guardar|r")
 
   SLASH_AICAD1 = "/aicad"
-  SLASH_AICAD2 = "/aicadbase"
   SlashCmdList["AICAD"] = function(msg)
-    msg = (msg or ""):lower()
-    msg = string.gsub(msg, "^%s+", "")
-    msg = string.gsub(msg, "%s+$", "")
-    
-    if msg == "1" then 
-      AICAD_GIA:SetMapBase(1)
-    elseif msg == "2" then 
-      AICAD_GIA:SetMapBase(2)
-    elseif msg == "3" then 
-      AICAD_GIA:SetMapBase(3)
-    elseif msg == "gold" then
-      if AICAD_GIA_DB then AICAD_GIA_DB.routeMode = "GOLD" end
-      print("|cffffcc00[AICAD] Modo GOLD|r")
-    elseif msg == "level" or msg == "leveling" then
-      if AICAD_GIA_DB then AICAD_GIA_DB.routeMode = "LEVELING_1_450" end
-      print("|cffffcc00[AICAD] Modo LEVELING 1-450|r")
+    msg = (msg or ""):lower():gsub("^%s+",""):gsub("%s+$","")
+    if msg == "1" then AICAD_GIA:SetMapBase(1)
+    elseif msg == "2" then AICAD_GIA:SetMapBase(2)
+    elseif msg == "3" then AICAD_GIA:SetMapBase(3)
+    elseif msg == "gold" then AICAD_GIA_DB.routeMode = "GOLD"
+    elseif msg == "level" then AICAD_GIA_DB.routeMode = "LEVELING_1_450"
     elseif msg == "clear" then
       local mapID = GetCurrentMapAreaID and GetCurrentMapAreaID() or 0
       if _G["AICAD_WORLDMAP_DB"] and _G["AICAD_WORLDMAP_DB"].personal then
         _G["AICAD_WORLDMAP_DB"].personal[mapID] = {}
-        print("|cffff0000[AICAD] Base 1 Personal limpiada mapa: "..mapID.." | Base 3 WEB no tocada|r")
+        print("|cffff0000[AICAD] Base 1 limpiada mapa: "..mapID.." | WEB no tocada|r")
       end
-    elseif msg == "scan on" then
-      if AICAD_GIA_DB then AICAD_GIA_DB.autoScan = true end
-      print("|cff00ff00[AICAD] Scanner proximidad ON - Guarda en Base 1|r")
-    elseif msg == "scan off" then
-      if AICAD_GIA_DB then AICAD_GIA_DB.autoScan = false end
-      print("|cffff0000[AICAD] Scanner proximidad OFF|r")
+    elseif msg == "scan on" then AICAD_GIA_DB.autoScan = true; print("|cff00ff00[AICAD] Scanner Solo Pasar ON|r")
+    elseif msg == "scan off" then AICAD_GIA_DB.autoScan = false; print("|cffff0000[AICAD] Scanner OFF|r")
     else
-      if InterfaceOptionsFrame_OpenToCategory then
-        InterfaceOptionsFrame_OpenToCategory("AICAD GIA")
-        InterfaceOptionsFrame_OpenToCategory("AICAD GIA")
-      end
-      print("|cffffcc00[AICAD] Comandos: /aicad 1=Personal(Escribe) 2=Gathermate(Lectura) 3=WEB(Solo muestra) | gold | level | clear | scan on/off|r")
+      InterfaceOptionsFrame_OpenToCategory("AICAD GIA")
+      InterfaceOptionsFrame_OpenToCategory("AICAD GIA")
+      print("|cffffcc00Comandos: /aicad 1=Personal(Escribe) 3=WEB(Solo muestra) | scan on/off|r")
     end
   end
 end
 
--- === GOD FIX: Nunca guarda si estás en Base 3 WEB - WEB solo mostrar ===
+-- === UNIFICADO: Guarda en las 2 DB a la vez ===
 function AICAD_GIA:SavePersonalNode(mapID, x, y, name)
   if not mapID or not x or not y or x == 0 then return end
-  if not AICAD_GIA_DB then return end
-  if AICAD_GIA_DB.autoScan == false then return end
-  if AICAD_GIA:GetMapBase() == 3 then return end -- BLINDADO: WEB no se modifica
+  if not AICAD_GIA_DB or AICAD_GIA_DB.autoScan == false then return end
+  if self:GetMapBase() == 3 then return end
   
   _G["AICAD_WORLDMAP_DB"] = _G["AICAD_WORLDMAP_DB"] or {personal={}}
   _G["AICAD_WORLDMAP_DB"].personal = _G["AICAD_WORLDMAP_DB"].personal or {}
@@ -75,44 +59,59 @@ function AICAD_GIA:SavePersonalNode(mapID, x, y, name)
   end
   
   table.insert(_G["AICAD_WORLDMAP_DB"].personal[mapID], {x=x, y=y, name=name, time=time()})
-  print("|cff00ff00[AICAD] + Personal sin minar: "..(name or "Nodo").." en "..string.format("%.1f, %.1f", x*100, y*100).." | /aicad 1 para ver en M|r")
+  
+  NodeSightDB = NodeSightDB or {}; NodeSightDB.nodes = NodeSightDB.nodes or {}
+  local zone = GetRealZoneText() or GetZoneText()
+  NodeSightDB.nodes[zone] = NodeSightDB.nodes[zone] or {}
+  local icon = "Interface\\Icons\\INV_Misc_Herb_02"
+  if name and string.lower(name):find("veta") then icon="Interface\\Icons\\INV_Ore_Copper_01" end
+  table.insert(NodeSightDB.nodes[zone], {x=x, y=y, mx=true, icon=icon})
+  
+  print("|cff00ff00[AICAD] + Auto: "..(name or "Nodo").." | "..string.format("%.1f, %.1f", x*100, y*100).."|r")
+  if _G["AICAD_NodeSight"] and _G["AICAD_NodeSight"].DrawSaved then _G["AICAD_NodeSight"].DrawSaved() end
 end
 
 local f = CreateFrame("Frame")
 f:RegisterEvent("PLAYER_LOGIN")
 f:SetScript("OnEvent", function(self, event)
-  if event == "PLAYER_LOGIN" then
-    AICAD_GIA:OnInitialize()
-    self:UnregisterEvent("PLAYER_LOGIN")
+  AICAD_GIA:OnInitialize()
+  self:UnregisterEvent("PLAYER_LOGIN")
+end)
+
+-- === SCANNER SOLO PASAR 0.3s ===
+local scanFrame = CreateFrame("Frame")
+scanFrame.lastScan = 0; scanFrame.lastNode = ""
+scanFrame:SetScript("OnUpdate", function(self, elapsed)
+  if not AICAD_GIA_DB or not AICAD_GIA_DB.autoScan then return end
+  if AICAD_GIA:GetMapBase() == 3 then return end
+  self.lastScan = self.lastScan + elapsed
+  if self.lastScan < 0.3 then return end; self.lastScan = 0
+  local mapID = GetCurrentMapAreaID and GetCurrentMapAreaID() or nil
+  if not mapID or mapID == 0 then return end
+  local x, y = GetPlayerMapPosition("player")
+  if not x or x == 0 then return end
+  local tooltipText = nil
+  if GameTooltip and GameTooltip:IsShown() then
+    local gtt = _G["GameTooltipTextLeft1"]
+    if gtt then tooltipText = gtt:GetText() end
+  end
+  if tooltipText and tooltipText ~= self.lastNode then
+    local lname = string.lower(tooltipText)
+    if string.find(lname, "veta") or string.find(lname, "filón") or string.find(lname, "hierba") or string.find(lname, "flor") or string.find(lname, "espina") or string.find(lname, "cobre") or string.find(lname, "estaño") or string.find(lname, "oro") or string.find(lname, "adamantita") or string.find(lname, "khorium") then
+      self.lastNode = tooltipText
+      AICAD_GIA:SavePersonalNode(mapID, x, y, tooltipText)
+    end
   end
 end)
 
--- === SCANNER PROXIMIDAD - Solo pasar cerca ===
-local scanFrame = CreateFrame("Frame")
-scanFrame.lastScan = 0
-scanFrame:SetScript("OnUpdate", function(self, elapsed)
-  if not AICAD_GIA_DB or not AICAD_GIA_DB.autoScan then return end
-  if AICAD_GIA:GetMapBase() == 3 then return end -- No escanear si WEB solo muestra
-  self.lastScan = self.lastScan + elapsed
-  if self.lastScan < 1.5 then return end
-  self.lastScan = 0
-  
-  local mapID = GetCurrentMapAreaID and GetCurrentMapAreaID() or nil
-  if not mapID or mapID == 0 then return end
-  
-  local x, y = GetPlayerMapPosition("player")
-  if not x or x == 0 then return end
-  
-  if GameTooltip and GameTooltip:IsVisible() then
-    local gtt = _G["GameTooltipTextLeft1"]
-    if gtt then
-      local name = gtt:GetText()
-      if name then
-        local lname = string.lower(name)
-        if string.find(lname, "hierba") or string.find(lname, "flor") or string.find(lname, "espina") or string.find(lname, "terocone") or string.find(lname, "felweed") or string.find(lname, "dreaming glory") or string.find(lname, "nightmare vine") or string.find(lname, "veta") or string.find(lname, "filon") or string.find(lname, "adamantita") or string.find(lname, "khorium") then
-          AICAD_GIA:SavePersonalNode(mapID, x, y, name)
-        end
-      end
+local moveFrame = CreateFrame("Frame")
+moveFrame.lastX, moveFrame.lastY = 0,0
+moveFrame:SetScript("OnUpdate", function(self, el)
+  local x,y = GetPlayerMapPosition("player")
+  if x and x~=0 then
+    if math.abs(x-self.lastX) > 0.01 or math.abs(y-self.lastY) > 0.01 then
+      scanFrame.lastNode = ""
+      self.lastX, self.lastY = x,y
     end
   end
 end)
