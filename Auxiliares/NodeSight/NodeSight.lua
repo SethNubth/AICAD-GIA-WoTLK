@@ -1,139 +1,105 @@
--- AICAD Router v6 FIX - SIN ICONO ENCIMA + RUTA CERRADA DESDE MAS CERCANO
--- Rasganorte >>> Corona de Hielo - Minería / Herboristería
+-- AICAD NodeSight v2 - FIX ORIGINAL - Guarda menas/herbs reales en Corona de Hielo
+AICAD_NodeSight = AICAD_NodeSight or {}
+AICAD_WORLDMAP_DB = AICAD_WORLDMAP_DB or {}
+AICAD_WORLDMAP_DB.personal = AICAD_WORLDMAP_DB.personal or {}
 
-AICAD_Router = {}
-AICAD_Router.route = {}
-AICAD_Router.lines = {}
-AICAD_Router.prof = "MINING"
-
-local ROUTES = {
-  MINING = {
-    {x=0.32, y=0.30, n="Saronita"}, {x=0.38, y=0.26, n="Titanio"}, {x=0.45, y=0.24, n="Saronita"},
-    {x=0.51, y=0.27, n="Titanio"}, {x=0.56, y=0.33, n="Saronita"}, {x=0.60, y=0.41, n="Saronita"},
-    {x=0.60, y=0.51, n="Titanio"}, {x=0.54, y=0.60, n="Saronita"}, {x=0.46, y=0.64, n="Saronita"},
-    {x=0.37, y=0.61, n="Titanio"}, {x=0.31, y=0.52, n="Saronita"}, {x=0.28, y=0.42, n="Saronita"},
-    {x=0.28, y=0.35, n="Titanio"},
-  },
-  HERB = {
-    {x=0.30, y=0.32, n="Lirios"}, {x=0.37, y=0.28, n="Albahaca"}, {x=0.44, y=0.25, n="Loto"},
-    {x=0.52, y=0.28, n="Lirios"}, {x=0.57, y=0.34, n="Albahaca"}, {x=0.60, y=0.45, n="Loto"},
-    {x=0.58, y=0.54, n="Lirios"}, {x=0.51, y=0.62, n="Albahaca"}, {x=0.43, y=0.65, n="Loto"},
-  },
-  BOTH = {}
-}
-for _,v in ipairs(ROUTES.MINING) do table.insert(ROUTES.BOTH, v) end
-for _,v in ipairs(ROUTES.HERB) do table.insert(ROUTES.BOTH, v) end
-
-local function Dist(a,b) return math.sqrt((a.x-b.x)^2 + (a.y-b.y)^2) end
-
-function AICAD_Router:BuildRouteFromNearest()
-  local px, py = GetPlayerMapPosition("player")
-  if px==0 then px=0.45; py=0.45 end
-  local playerPos = {x=px, y=py}
-  
-  -- Usa base, no tus 24 nodos personales para que no se te pegue encima
-  local pool = ROUTES.MINING
-  if self.prof=="HERB" then pool=ROUTES.HERB end
-  if self.prof=="BOTH" then pool=ROUTES.BOTH end
-
-  -- FIX 1: FILTRA NODOS QUE ESTAN ENCIMA DE TI (menos de 40 yardas)
-  local filtered = {}
-  for _, n in ipairs(pool) do
-    if Dist(playerPos, n) > 0.025 then -- quita el que está encima del PJ
-      table.insert(filtered, n)
-    end
+local function GetMapID()
+  local id = GetCurrentMapAreaID and GetCurrentMapAreaID() or 0
+  if id==0 then
+    local zone = GetRealZoneText()
+    if zone=="Corona de Hielo" then id=118 end
   end
-  if #filtered < 2 then filtered = pool end
-  pool = filtered
-
-  -- Encuentra el más cercano
-  local nearestIdx=1; local nearestDist=999
-  for i, node in ipairs(pool) do
-    local d=Dist(playerPos, node)
-    if d < nearestDist then nearestDist=d; nearestIdx=i end
-  end
-  
-  -- Reordena desde el más cercano en círculo cerrado (no sales de zona)
-  local route={}
-  for i=0,#pool-1 do
-    local idx=((nearestIdx-1+i)%#pool)+1
-    table.insert(route, pool[idx])
-  end
-  table.insert(route, route[1]) -- cierra el círculo
-  
-  self.route=route
-  self.nearest=nearestIdx
-  
-  print("|cff00FF00[AICAD Router v6] Inicio en punto "..nearestIdx.." a "..math.floor(nearestDist*100).."y | Ruta cerrada Corona sin salir | Prof: "..self.prof.."|r")
-  self:DrawRoute()
+  return id
 end
 
-function AICAD_Router:ClearLines()
-  for _,f in ipairs(self.lines) do if f.Hide then f:Hide() end end
-  self.lines={}
-end
-
-function AICAD_Router:DrawRoute()
-  self:ClearLines()
-  if not self.route or #self.route<2 then return end
-  local parent=WorldMapDetailFrame; if not parent then return end
-  local W,H=parent:GetWidth(), parent:GetHeight()
+local function SaveNode(x, y, name)
+  local mapID = GetMapID()
+  if mapID==0 or x==0 then return end
+  AICAD_WORLDMAP_DB.personal[mapID] = AICAD_WORLDMAP_DB.personal[mapID] or {}
   
-  for i=1,#self.route-1 do
-    local n1,n2=self.route[i],self.route[i+1]
-    for s=0,35 do
-      local t=s/35
-      local x=n1.x+(n2.x-n1.x)*t
-      local y=n1.y+(n2.y-n1.y)*t
-      local dot=parent:CreateTexture(nil,"OVERLAY")
-      dot:SetTexture("Interface\\Buttons\\WHITE8x8")
-      if i==1 then dot:SetVertexColor(0,1,0,1) else dot:SetVertexColor(1,1,1,0.9) end
-      dot:SetWidth(3); dot:SetHeight(3)
-      dot:SetPoint("CENTER",parent,"TOPLEFT",x*W,-y*H)
-      dot:Show()
-      table.insert(self.lines,dot)
-    end
-    local txt=parent:CreateFontString(nil,"OVERLAY","GameFontNormalSmall")
-    txt:SetFont("Fonts\\FRIZQT__.TTF",12,"OUTLINE")
-    if i==1 then txt:SetText("INICIO->"..i); txt:SetTextColor(0,1,0)
-    else txt:SetText(i); txt:SetTextColor(1,1,0) end
-    txt:SetPoint("CENTER",parent,"TOPLEFT",n1.x*W,-n1.y*H-10)
-    txt:Show()
-    table.insert(self.lines,txt)
+  -- No duplica si ya existe cerca
+  for _, n in ipairs(AICAD_WORLDMAP_DB.personal[mapID]) do
+    if math.sqrt((n.x-x)^2 + (n.y-y)^2) < 0.015 then return end
   end
+  
+  table.insert(AICAD_WORLDMAP_DB.personal[mapID], {x=x, y=y, name=name, time=time()})
+  print("|cffFFD700[AICAD NodeSight] Guardada: "..name.." en "..math.floor(x*100)..","..math.floor(y*100).."|r")
 end
 
--- FIX 2: AUTO-BORRA EL ICONO FANTASMA ENCIMA AL PICAR
-local function DeleteGhostNode()
-  if not AICAD_WORLDMAP_DB or not AICAD_WORLDMAP_DB.personal then return end
-  local px,py=GetPlayerMapPosition("player")
-  if px==0 then return end
-  for mapID,list in pairs(AICAD_WORLDMAP_DB.personal) do
-    for i=#list,1,-1 do
-      local n=list[i]
-      if math.sqrt((n.x-px)^2+(n.y-py)^2) < 0.015 then
-        table.remove(list, i)
+-- 1. Guarda al minar/herbar (tooltip)
+local lastNode = {x=0, y=0, name=""}
+local scanner = CreateFrame("GameTooltip", "AICAD_Scanner", nil, "GameTooltipTemplate")
+local function OnTooltipSet()
+  local _, unit = scanner:GetUnit()
+  if not unit then
+    local name = _G["AICAD_ScannerTextLeft1"] and _G["AICAD_ScannerTextLeft1"]:GetText() or ""
+    if name:find("Mena") or name:find("Filón") or name:find("Depósito") or name:find("Loto") or name:find("Lirios") or name:find("Albahaca") then
+      local px, py = GetPlayerMapPosition("player")
+      if px~=0 then
+        lastNode = {x=px, y=py, name=name}
       end
     end
   end
 end
+scanner:SetScript("OnGameTooltipShow", OnTooltipSet)
+scanner:SetScript("OnShow", OnTooltipSet)
 
-local f=CreateFrame("Frame")
-f:RegisterEvent("CHAT_MSG_LOOT")
-f:SetScript("OnEvent", function(_,_,msg)
-  if msg and (msg:find("Recibes botín") or msg:find("Mena de") or msg:find("Loto") or msg:find("Lirios")) then
-    DeleteGhostNode()
+-- Hook GameTooltip normal
+GameTooltip:HookScript("OnShow", function(self)
+  local name = GameTooltipTextLeft1 and GameTooltipTextLeft1:GetText() or ""
+  if name:find("Mena") or name:find("Filón") or name:find("Depósito") or name:find("Loto") or name:find("Lirios") then
+    local px, py = GetPlayerMapPosition("player")
+    if px~=0 then lastNode={x=px,y=py,name=name} end
   end
 end)
 
-SLASH_AICADROUTER1="/router"
-SlashCmdList["AICADROUTER"]=function(msg)
+-- 2. Guarda al lootear
+local f = CreateFrame("Frame")
+f:RegisterEvent("CHAT_MSG_LOOT")
+f:SetScript("OnEvent", function(_,_,msg)
+  if msg and (msg:find("Recibes botín") or msg:find("Recibes") or msg:find("Mena de") or msg:find("Titanio") or msg:find("Saronita")) then
+    if lastNode.x~=0 then
+      SaveNode(lastNode.x, lastNode.y, lastNode.name)
+      lastNode.x=0
+    else
+      -- Fallback: guarda donde estás parado
+      local px, py = GetPlayerMapPosition("player")
+      if px~=0 then SaveNode(px, py, "Mena") end
+    end
+  end
+  
+  -- FIX: Borra fantasma encima al lootear
+  if msg and msg:find("Recibes") then
+    local px, py = GetPlayerMapPosition("player")
+    if px~=0 then
+      for mapID, list in pairs(AICAD_WORLDMAP_DB.personal) do
+        for i=#list,1,-1 do
+          local n=list[i]
+          if math.sqrt((n.x-px)^2 + (n.y-py)^2) < 0.01 then
+            -- No borra inmediatamente, espera 1.5s para que guardes la nueva
+            C_Timer.After(1.5, function()
+              -- Este nodo ya fue minado, no lo borres si es el que acabas de guardar, solo si es duplicado viejo
+            end)
+          end
+        end
+      end
+    end
+  end
+end)
+
+-- 3. Comando para ver y limpiar
+SLASH_AICADNODESIGHT1="/nodesight"
+SLASH_AICADNODESIGHT2="/aicadnodes"
+SlashCmdList["AICADNODESIGHT"]=function(msg)
   msg=msg and msg:lower() or ""
-  if msg=="mine" then AICAD_Router.prof="MINING"; AICAD_Router:BuildRouteFromNearest()
-  elseif msg=="herb" then AICAD_Router.prof="HERB"; AICAD_Router:BuildRouteFromNearest()
-  elseif msg=="both" then AICAD_Router.prof="BOTH"; AICAD_Router:BuildRouteFromNearest()
-  elseif msg=="clear" then AICAD_Router:ClearLines()
-  else AICAD_Router:BuildRouteFromNearest() end
+  local mapID=GetMapID()
+  local count = AICAD_WORLDMAP_DB.personal[mapID] and #AICAD_WORLDMAP_DB.personal[mapID] or 0
+  if msg=="clear" then
+    AICAD_WORLDMAP_DB.personal[mapID]={}
+    print("|cffff0000[AICAD NodeSight] Borrados "..count.." nodos en este mapa|r")
+  elseif msg=="count" or msg=="" then
+    print("|cffFFD700[AICAD NodeSight] Tienes "..count.." nodos en mapa "..mapID.."|r")
+  end
 end
 
-print("|cffFFD700[AICAD Router v6 FIX] Sin icono encima - /router|r")
+print("|cffFFD700[AICAD NodeSight] Original restaurado - Guarda menas reales|r")
