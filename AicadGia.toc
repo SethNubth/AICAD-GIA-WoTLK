@@ -3,6 +3,8 @@
 ## Notes: Router AI Gold/Level + NodeSight 1-450 HD - 3 Bases WEB/GatherMate/Personal - Naerzone 3.3.5a
 ## Author: GOD
 ## Version: 1.0 Final
+## DefaultState: enabled
+## LoadOnDemand: 0
 ## OptionalDeps: TomTom, GatherMate2, GatherMate2_Data
 ## SavedVariables: AICAD_WORLDMAP_DB, AICAD_ROUTER_DB, NodeSightDB, AICAD_GIA_WORLDMAP_NODES, AICAD_GIA_WEB_TGA, AICAD_GIA_DB, AICAD_GIA_IMPORTED
 ## SavedVariablesPerCharacter: AICAD_GIA_CHAR_DB
@@ -10,6 +12,7 @@
 # Libs - TIENEN que ir primero o no carga
 Libs\LibStub\LibStub.lua
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+Libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua
 
 # Core - En orden, Media siempre primero
 Core\Media.lua
