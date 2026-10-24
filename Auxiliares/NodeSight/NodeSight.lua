@@ -1,127 +1,132 @@
--- Auxiliares\NodeSight\NodeSight.lua - FIX MINIMAP - Naerzone 30300
+-- Auxiliares\NodeSight\NodeSight.lua - AUTOSAVE 1-450 - Naerzone 30300
 local ADDON_NAME, ns = ...
 ns = ns or {}
-AICAD_MEDIA = AICAD_MEDIA or {}
 
-local LSM = nil
-if LibStub then
-  local ok, lib = pcall(function() return LibStub("LibSharedMedia-3.0", true) end)
-  if ok then LSM = lib end
-end
-
-local defaults = {
-  enabled=true,
-  shape=3, iconSize=18,
-  scan=true,
-}
+local defaults = { enabled=true, shape=3, iconSize=18, worldIcons=true }
 NodeSightDB = NodeSightDB or {}
+NodeSightDB.nodes = NodeSightDB.nodes or {} -- AQUI SE GUARDA TODO LO QUE PIQUES
 for k,v in pairs(defaults) do if NodeSightDB[k]==nil then NodeSightDB[k]=v end end
 local db = NodeSightDB
 ns.db = db
 
-local pool = {}
-local poolIndex = 0
+local poolMinimap = {}
+local poolWorld = {}
+local mIndex, wIndex = 0,0
 local GOLD_BORDER = "Interface\\Minimap\\Tracking\\TrackingBorder"
-local GOLD_SIZE, GOLD_X, GOLD_Y = 30, -9.3, 8.7
-local wait = 0
 
-local function FinderOn()
-  for i=1, GetNumTrackingTypes() do
-    local name, texture, active = GetTrackingInfo(i)
-    if active then
-      if name and (name:find("Find Herbs") or name:find("Find Minerals") or name:find("Hierbas") or name:find("Menas") or name:find("Buscar")) then
-        return true, texture, name
-      end
-    end
+-- POOL MINIMAPA
+function ns.GetMiniFrame()
+  mIndex=mIndex+1
+  if not poolMinimap[mIndex] then
+    local f = CreateFrame("Frame", "NSMini"..mIndex, Minimap)
+    f:SetWidth(db.iconSize); f:SetHeight(db.iconSize)
+    f:SetFrameLevel(6000); f:SetFrameStrata("MEDIUM")
+    f.tex=f:CreateTexture(nil,"OVERLAY"); f.tex:SetAllPoints(f)
+    f.tex:SetTexCoord(0.08,0.92,0.08,0.92)
+    f.border=f:CreateTexture(nil,"OVERLAY"); f.border:SetTexture(GOLD_BORDER)
+    f.border:SetWidth(30); f.border:SetHeight(30)
+    f.border:SetPoint("CENTER",f,"CENTER",-9.3,8.7)
+    f:Hide(); poolMinimap[mIndex]=f
   end
-  return false
+  return poolMinimap[mIndex]
 end
 
-function ns.GetFrame()
-  poolIndex = poolIndex + 1
-  if not pool[poolIndex] then
-    local f = CreateFrame("Frame", "NodeSightF"..poolIndex, Minimap)
-    f:SetWidth(db.iconSize or 18)
-    f:SetHeight(db.iconSize or 18)
-    f:SetFrameStrata("MEDIUM")
-    f:SetFrameLevel(6000)
-    f.tex = f:CreateTexture(nil, "OVERLAY")
-    f.tex:SetAllPoints(f)
-    f.tex:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-    f.border = f:CreateTexture(nil, "OVERLAY")
-    f.border:SetTexture(GOLD_BORDER)
-    f.border:SetWidth(GOLD_SIZE)
-    f.border:SetHeight(GOLD_SIZE)
-    f.border:SetPoint("CENTER", f, "CENTER", GOLD_X, GOLD_Y)
-    f:Hide()
-    pool[poolIndex] = f
+-- POOL WORLD MAP
+function ns.GetWorldFrame()
+  wIndex=wIndex+1
+  if not poolWorld[wIndex] then
+    local f = CreateFrame("Frame", "NSWorld"..wIndex, WorldMapDetailFrame)
+    f:SetWidth(db.iconSize+6); f:SetHeight(db.iconSize+6)
+    f:SetFrameLevel(6000); f:SetFrameStrata("MEDIUM")
+    f.tex=f:CreateTexture(nil,"OVERLAY"); f.tex:SetAllPoints(f)
+    f.tex:SetTexCoord(0.08,0.92,0.08,0.92)
+    f:Hide(); poolWorld[wIndex]=f
   end
-  return pool[poolIndex]
+  return poolWorld[wIndex]
 end
 
 function ns.ClearAll()
-  for i=1, #pool do if pool[i] then pool[i]:Hide(); pool[i]:ClearAllPoints() end end
-  poolIndex = 0
+  for i=1,#poolMinimap do if poolMinimap[i] then poolMinimap[i]:Hide(); poolMinimap[i]:ClearAllPoints() end end
+  for i=1,#poolWorld do if poolWorld[i] then poolWorld[i]:Hide(); poolWorld[i]:ClearAllPoints() end end
+  mIndex=0; wIndex=0
 end
 
--- SCANNER CORREGIDO - Ahora si posiciona en el minimapa
-local scanner = CreateFrame("Frame")
-scanner:SetScript("OnUpdate", function(self, elapsed)
-  wait = wait - elapsed
-  if wait > 0 then return end
-  wait = 0.3
-  if not db.enabled or not db.scan then return end
-  
-  local isOn, tex, name = FinderOn()
-  if not isOn then 
-    ns.ClearAll()
-    wait = 1
-    return 
-  end
-  
+-- DIBUJA TODO LO GUARDADO EN MAPA Y MINIMAPA
+function ns.DrawSaved()
+  if not db.enabled then return end
   ns.ClearAll()
-  -- Simula los blips de Blizzard alrededor del minimapa con tu textura HD
-  for i=1, 6 do
-    local f = ns.GetFrame()
-    local customTex = tex
-    if ns.NodeIcon and name then
-      local c = ns.NodeIcon(name)
-      if c then customTex = c end
+  local map = GetRealZoneText() or GetZoneText()
+  if not NodeSightDB.nodes[map] then return end
+  
+  for _,node in ipairs(NodeSightDB.nodes[map]) do
+    -- 1. En MINIMAPA (cerca de ti)
+    if node.mx then
+      local f = ns.GetMiniFrame()
+      f.tex:SetTexture(node.icon)
+      -- Convierte coordenadas de mundo a offset de minimapa
+      local px, py = GetPlayerMapPosition("player")
+      if px==0 and py==0 then px=0.5; py=0.5 end
+      local dx = (node.x - px) * 1200
+      local dy = (node.y - py) * 1200
+      if math.abs(dx)<120 and math.abs(dy)<120 then
+        f:SetPoint("CENTER", Minimap, "CENTER", dx, -dy)
+        if db.shape==3 then f.border:Show() else f.border:Hide() end
+        f:Show()
+      end
     end
-    if customTex then f.tex:SetTexture(customTex) end
-    -- POSICION REAL EN EL MINIMAPA - ESTO TE FALTABA
-    local angle = (i * 60 + GetTime()*20) % 360
-    local rad = math.rad(angle)
-    local dist = 60 + math.random(10, 50)
-    f:SetPoint("CENTER", Minimap, "CENTER", math.cos(rad)*dist, math.sin(rad)*dist)
-    if db.shape==3 then f.border:Show() else f.border:Hide() end
-    f:SetWidth(db.iconSize or 18)
-    f:SetHeight(db.iconSize or 18)
-    f:Show()
+    -- 2. En WORLD MAP (cuando le das M)
+    if WorldMapFrame:IsVisible() and db.worldIcons then
+      local wf = ns.GetWorldFrame()
+      wf.tex:SetTexture(node.icon)
+      wf:SetPoint("CENTER", WorldMapDetailFrame, "TOPLEFT", node.x*WorldMapDetailFrame:GetWidth(), -node.y*WorldMapDetailFrame:GetHeight())
+      wf:Show()
+    end
   end
-end)
-
-local ev = CreateFrame("Frame")
-ev:RegisterEvent("ADDON_LOADED")
-ev:SetScript("OnEvent", function(s,e,a)
-  if e=="ADDON_LOADED" and a and string.lower(a)=="aicadgia" then
-    print("|cffffcc00[AICAD NodeSight FIX] Minimapa activo - /ns on/off | /ns size 24|r")
-  end
-end)
-
-SLASH_NODESIGHT1="/nodesight"
-SLASH_NODESIGHT2="/ns"
-SlashCmdList["NODESIGHT"]=function(msg)
-  msg = msg or ""
-  msg = string.lower(msg):gsub("^%s+", ""):gsub("%s+$", "")
-  if msg=="off" then NodeSightDB.enabled=false; ns.ClearAll(); print("|cffff0000NodeSight OFF|r")
-  elseif msg=="on" then NodeSightDB.enabled=true; print("|cff00ff00NodeSight ON 1-450 Skada HD|r")
-  elseif msg=="skada on" then db.shape=3; print("Borde dorado ON")
-  elseif msg=="skada off" then db.shape=1; print("Borde cuadrado")
-  elseif msg:find("size") then 
-    local s = tonumber(msg:match("%d+")) or 18
-    db.iconSize=s; print("Tamaño: "..s)
-  else NodeSightDB.enabled=not NodeSightDB.enabled; print("Toggle: "..(NodeSightDB.enabled and "ON" or "OFF")) end
 end
 
-_G["AICAD_NodeSight"] = ns
+-- AUTOGUARDADO CUANDO PIQUES
+local gatherFrame = CreateFrame("Frame")
+gatherFrame:RegisterEvent("CHAT_MSG_LOOT")
+gatherFrame:RegisterEvent("WORLD_MAP_UPDATE")
+gatherFrame:SetScript("OnEvent", function(self, event, msg)
+  if event=="CHAT_MSG_LOOT" then
+    if not msg:find("Recibes bot") and not msg:find("Recibes") then return end
+    local x,y = GetPlayerMapPosition("player")
+    if x==0 and y==0 then return end
+    local zone = GetRealZoneText() or GetZoneText()
+    NodeSightDB.nodes[zone] = NodeSightDB.nodes[zone] or {}
+    
+    -- Detecta que picaste por el texto del loot
+    local icon = "Interface\\Icons\\INV_Misc_Herb_02"
+    if msg:find("Cobre") or msg:find("Esta") or msg:find("Mineral") then icon="Interface\\Icons\\INV_Ore_Copper_01" end
+    if msg:find("Hierba") or msg:find("Flor") then icon="Interface\\Icons\\INV_Misc_Herb_02" end
+    
+    table.insert(NodeSightDB.nodes[zone], {x=x, y=y, mx=true, icon=icon, time=date("%H:%M")})
+    print("|cff00ff00[NodeSight] Guardado en "..zone.." |r"..msg)
+    ns.DrawSaved()
+  elseif event=="WORLD_MAP_UPDATE" then
+    ns.DrawSaved()
+  end
+end)
+
+-- Refresco cada 0.5s
+local upd=CreateFrame("Frame")
+local t=0
+upd:SetScript("OnUpdate", function(s,el)
+  t=t+el; if t<0.5 then return end; t=0
+  ns.DrawSaved()
+end)
+
+-- SLASH
+SLASH_NODESIGHT1="/ns"
+SLASH_NODESIGHT2="/nodesight"
+SlashCmdList["NODESIGHT"]=function(msg)
+  msg=msg:lower():gsub("^%s+",""):gsub("%s+$","")
+  if msg=="clear" then NodeSightDB.nodes={}; ns.ClearAll(); print("|cffff0000NodeSight DB borrada|r")
+  elseif msg=="off" then db.enabled=false; ns.ClearAll(); print("NodeSight OFF")
+  elseif msg=="on" then db.enabled=true; print("NodeSight ON - AutoGuardado activo")
+  else print("|cffffcc00NodeSight AutoSave: /ns on/off | /ns clear (borra mapa)|r") end
+end
+
+print("|cffffcc00[AICAD NodeSight] AutoSave cargado - Pica una mena y dale M para verla|r")
+_G["AICAD_NodeSight"]=ns
