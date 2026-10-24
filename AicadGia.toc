@@ -1,36 +1,27 @@
 ## Interface: 30300
 ## Title: AICAD GIA |cffffcc00v1.0 Final|
-## Notes: Router AI Gold/Level + NodeSight 1-450 HD - 3 Bases WEB/GatherMate/Personal - Naerzone 3.3.5a
+## Notes: Router AI Gold/Level + NodeSight 1-450 HD - Naerzone 3.3.5a
 ## Author: GOD
 ## Version: 1.0 Final
-## DefaultState: enabled
-## LoadOnDemand: 0
-## OptionalDeps: TomTom, GatherMate2, GatherMate2_Data
-## SavedVariables: AICAD_WORLDMAP_DB, AICAD_ROUTER_DB, NodeSightDB, AICAD_GIA_WORLDMAP_NODES, AICAD_GIA_WEB_TGA, AICAD_GIA_DB, AICAD_GIA_IMPORTED
+## SavedVariables: NodeSightDB, AICAD_ROUTER_DB, AICAD_WORLDMAP_DB
 ## SavedVariablesPerCharacter: AICAD_GIA_CHAR_DB
+## OptionalDeps: TomTom, GatherMate2
 
-# Libs - TIENEN que ir primero o no carga
 Libs\LibStub\LibStub.lua
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
 Libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua
 
-# Core - En orden, Media siempre primero
 Core\Media.lua
 Core\Locale.lua
 Core\Config.lua
 Core\Main.lua
 
-# Auxiliares
 Auxiliares\NodeSight\Names.lua
 Auxiliares\NodeSight\NodeSight.lua
-Auxiliares\NodeSight\Settings.lua
 
 Auxiliares\WorldMap\Database.lua
-Auxiliares\WorldMap\Settings.lua
 Auxiliares\WorldMap\WorldMap.lua
 
 Auxiliares\Router\Router.lua
-Auxiliares\Router\Settings.lua
 
-# UI al final
 UI\OptionsPanel.lua
